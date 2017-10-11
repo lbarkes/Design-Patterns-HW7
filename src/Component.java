@@ -6,4 +6,5 @@ public abstract class Component {
     public abstract String toString();
     public abstract Component getParent();
     public abstract void setParent(Component parent);
+    public abstract Iter<Component> makeIter();
 }

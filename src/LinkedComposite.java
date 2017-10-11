@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 /**
  * Created by logan on 10/3/2017.
  */
@@ -6,6 +8,7 @@ public class LinkedComposite extends Component {
     private Node head;
     private int length;
     private String indent;
+    private int instanceID;
 
     public LinkedComposite(Component... components){
         this.indent = "";
@@ -25,16 +28,13 @@ public class LinkedComposite extends Component {
                 next.component.setParent(this);
             }
         }
+        this.instanceID = System.identityHashCode(this);
     }
 
-    public String toString(){
-        String first = "\n" + indent + "LinkedComposite containing";
-        Node temp = this.head;
-        while(temp != null){
-            first += temp.toString();
-            temp = temp.next;
-        }
-        return first;
+    public String toString() {
+        return ( parent == null ) ?
+                instanceID + " is the root." :
+                instanceID + " is the child of " + parent;
     }
 
     public void add(Component component){ //add a node to the end of the list
@@ -127,7 +127,42 @@ public class LinkedComposite extends Component {
                 node = node.next;
             }
         }
+    }
+
+    @Override
+    public Iter<Component> makeIter() {
+        return new LinkedCompositeIter(this.head);
+    }
+
+    private class LinkedCompositeIter implements Iter<Component>{
+        private Node head;
+        private Node curr;
+
+        public LinkedCompositeIter(Node head){
+            this.curr = head;
+            this.head = head;
+        }
 
 
+        public Component currentItem(){
+            return curr.component;
+        }
+
+        public boolean isValid(){
+            return (curr.next == null) ? false : true;
+        }
+
+        public void next(){
+            if(curr.next != null){
+                curr = curr.next;
+            }
+            else{
+                throw new NoSuchElementException("End of LinkedComposite");
+            }
+        }
+
+        public void reset(){
+            this.curr = head;
+        }
     }
 }

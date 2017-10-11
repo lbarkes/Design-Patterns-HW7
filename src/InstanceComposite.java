@@ -1,14 +1,19 @@
+import java.util.NoSuchElementException;
+
 /**
  * Created by logan on 10/3/2017.
  */
 public class InstanceComposite extends Component{
-    private Component child;
+    public Component child;
     private String indent;
+    private int instanceID;
+
 
     public InstanceComposite(){ //no children
         this.child = null;
         this.indent = "";
         this.parent = null;
+        this.instanceID = System.identityHashCode(this);
     }
 
     public InstanceComposite(Component child){ //only one child
@@ -28,10 +33,10 @@ public class InstanceComposite extends Component{
         this.child.setParent(this);//update indent of child
     }
 
-    public String toString(){
-        String first = "\n" + indent + "InstanceComposite containing" ;
-        first += child.toString();
-        return first;
+    public String toString() {
+        return ( parent == null ) ?
+                instanceID + " is the root." :
+                instanceID + " is the child of " + parent;
     }
 
     public Component getParent(){
@@ -52,5 +57,26 @@ public class InstanceComposite extends Component{
         if(this.child != null){
             child.setParent(this);
         }
+    }
+
+    @Override
+    public Iter<Component> makeIter() {
+        return new InstanceCompositeIter();
+    }
+
+    private class InstanceCompositeIter implements Iter<Component>{
+        public Component currentItem(){
+            return child;
+        }
+
+        public boolean isValid(){
+            return false;
+        }
+
+        public void next(){
+            throw new NoSuchElementException("InstanceComposite only has one child");
+        }
+
+        public void reset(){}
     }
 }

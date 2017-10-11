@@ -1,3 +1,5 @@
+import java.util.NoSuchElementException;
+
 /**
  * Created by logan on 10/3/2017.
  */
@@ -6,6 +8,8 @@ public class Node extends Component{
     public Node next;
 
     public Component component;
+
+    private String instanceID;
 
     public Node(Component component){
         this.parent = null;
@@ -23,6 +27,27 @@ public class Node extends Component{
 
     public void setParent(Component parent){
         component.setParent(parent);
+    }
+
+    @Override
+    public Iter<Component> makeIter() {
+        return new NodeIter();
+    }
+
+    private class NodeIter implements Iter<Component> {
+        public Component currentItem(){
+            return component;
+        }
+
+        public boolean isValid(){
+            return false;
+        }
+
+        public void next(){
+            throw new NoSuchElementException("End of ArrayComposite");
+        }
+
+        public void reset(){}
     }
 
 
